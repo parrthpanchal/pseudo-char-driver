@@ -6,6 +6,7 @@
 #include<linux/kdev_t.h>
 #include<linux/uaccess.h>
 #include<linux/slab.h>
+#include<linux/mod_devicetable.h>
 #include "pcd_platform.h"
 
 
@@ -57,10 +58,26 @@ struct file_operations pcd_fops = {
 	.llseek = pcd_llseek
 };
 
+/* 
+	Support multiple versions of pcdev
+	TODO : Look at platform_match function in platform.c
+	to get more details about how the binding process work
+
+ */
+const struct platform_device_id pcdevs_id[] = {
+
+	[0] = {.name = "pcdev-A1x"},
+	[1] = {.name = "pcdev-A2x"},
+	[2] = {.name = "pcdev-A3x"},
+	[3] = {.name = "pcdev-A4x"},
+	{ }
+};
+
 struct platform_driver pcd_platform_drv = {
 
 	.probe = pcd_platform_drv_probe,
 	.remove = pcd_platform_drv_remove,
+	.id_table = pcdevs_id,
 	.driver = {
 			.name = "pseudo-char-device"
 	}
